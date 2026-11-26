@@ -3,22 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smooth Scroll Animation</title>
+  <title>Apple Liquid Glass | Creative Studio Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
+    :root {
+      --bg: #050508;
+      --glass-surface: rgba(255, 255, 255, 0.08);
+      --glass-surface-hover: rgba(255, 255, 255, 0.13);
+      --glass-border-light: rgba(255, 255, 255, 0.35);
+      --glass-border-dim: rgba(255, 255, 255, 0.08);
+      --glass-blur: 40px;
+      --apple-saturate: 190%;
+      --accent-glow: #ff4d2e;
+    }
+
     html, body {
       width: 100%;
-      height: 100%;
-      background-color: #000;
+      background-color: var(--bg);
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+
     body {
-      height: 600vh;
+      min-height: 450vh;
+      position: relative;
     }
+
+    /* Fixed Canvas Video Scrubbing */
     #canvas {
       position: fixed;
       top: 0;
@@ -27,25 +50,909 @@
       height: 100vh;
       display: block;
       pointer-events: none;
+      z-index: 1;
     }
-    /* Subtle minimal scrollbar */
+
+    /* Cinematic Optical Vignette */
+    .cinematic-vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(5, 5, 8, 0.15) 0%,
+        rgba(5, 5, 8, 0.6) 60%,
+        rgba(5, 5, 8, 0.95) 100%
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Minimal Native Scrollbar */
     ::-webkit-scrollbar {
       width: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: #000;
+      background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.25);
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Core Apple Liquid Glass Component Class */
+    .liquid-glass {
+      position: relative;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.14) 0%,
+        rgba(255, 255, 255, 0.04) 45%,
+        rgba(255, 255, 255, 0.02) 100%
+      );
+      backdrop-filter: blur(var(--glass-blur)) saturate(var(--apple-saturate)) contrast(105%);
+      -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--apple-saturate)) contrast(105%);
+      border: 1px solid var(--glass-border-light);
+      box-shadow:
+        0 25px 60px -10px rgba(0, 0, 0, 0.6),
+        0 10px 25px -5px rgba(0, 0, 0, 0.4),
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.65),
+        inset 0 -1.5px 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 0 25px 0 rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Liquid Specular Edge Reflection */
+    .liquid-glass::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.2) 30%,
+        rgba(255, 255, 255, 0.02) 60%,
+        rgba(255, 255, 255, 0.35) 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* Dynamic Cursor Caustic Highlight */
+    .liquid-caustic {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        500px circle at var(--cx, 50%) var(--cy, 50%),
+        rgba(255, 255, 255, 0.22) 0%,
+        transparent 65%
+      );
+      pointer-events: none;
+      border-radius: inherit;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .liquid-glass:hover .liquid-caustic {
+      opacity: 1;
+    }
+
+    /* Page Content Layer */
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+
+    /* =========================================
+       VISIONOS FLOATING LIQUID PILL NAVBAR
+    ========================================= */
+    .nav-floating-container {
+      position: fixed;
+      top: 24px;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      padding: 0 24px;
+      pointer-events: none;
+    }
+
+    .apple-nav {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 36px;
+      padding: 10px 24px 10px 20px;
+      border-radius: 9999px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.16) 0%,
+        rgba(255, 255, 255, 0.06) 100%
+      );
+      backdrop-filter: blur(50px) saturate(200%);
+      -webkit-backdrop-filter: blur(50px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow:
+        0 16px 40px -8px rgba(0, 0, 0, 0.5),
+        inset 0 1px 1px rgba(255, 255, 255, 0.7);
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .brand-icon {
+      width: 30px;
+      height: 30px;
+      border: 2px solid #ff7a18;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 122, 24, 0.12);
+      box-shadow: 0 0 14px rgba(255, 122, 24, 0.35);
+    }
+    .brand-icon::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff7a18;
+      box-shadow: 0 0 8px #ff7a18;
+    }
+
+    .brand-name {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+    }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+    }
+    .brand-sub {
+      font-size: 8.5px;
+      letter-spacing: 0.32em;
+      opacity: 0.75;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      transition: all 0.25s ease;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-contact-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+      transition: all 0.25s ease;
+    }
+    .nav-contact-pill:hover {
+      background: rgba(255, 255, 255, 0.28);
+      transform: scale(1.03);
+    }
+
+    /* =========================================
+       SECTION 1: HERO SHOWCASE (IMAGE 2)
+    ========================================= */
+    .hero-section {
+      min-height: 150vh;
+      padding: 140px 48px 60px;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Ambient "PORTFOLIO" Backdrop Text */
+    .bg-watermark {
+      text-align: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(65px, 12vw, 160px);
+      letter-spacing: 0.18em;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255, 150, 40, 0.35);
+      text-shadow: 0 0 50px rgba(255, 120, 20, 0.2);
+      user-select: none;
+      pointer-events: none;
+      margin-bottom: 24px;
+      animation: ambientGlow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes ambientGlow {
+      0% { opacity: 0.7; filter: drop-shadow(0 0 20px rgba(255, 120, 20, 0.2)); }
+      100% { opacity: 1; filter: drop-shadow(0 0 45px rgba(255, 150, 40, 0.4)); }
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    /* Left Hero Content */
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .brand-signature {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: rgba(255, 255, 255, 0.95);
+    }
+    .brand-signature svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: #fff;
+      stroke-width: 2.2;
+    }
+
+    .hero-title-create {
+      font-family: 'Bebas Neue', 'Syne', sans-serif;
+      font-size: clamp(90px, 13vw, 170px);
+      line-height: 0.88;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin-bottom: 20px;
+      text-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.7),
+        0 0 80px rgba(255, 255, 255, 0.15);
+    }
+
+    .hero-tagline {
+      font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 500;
+      margin-bottom: 38px;
+      max-width: 460px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Apple Liquid Glass CTA Button */
+    .btn-liquid-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 40px;
+      border-radius: 9999px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(255, 255, 255, 0.8) 100%
+      );
+      color: #0b0b10;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      width: fit-content;
+      box-shadow:
+        0 0 35px rgba(255, 255, 255, 0.45),
+        0 12px 28px rgba(0, 0, 0, 0.45),
+        inset 0 1px 1px #fff;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-liquid-pill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.8),
+        transparent
+      );
+      transition: left 0.6s ease;
+    }
+    .btn-liquid-pill:hover::after {
+      left: 100%;
+    }
+    .btn-liquid-pill:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow:
+        0 0 55px rgba(255, 255, 255, 0.7),
+        0 18px 36px rgba(0, 0, 0, 0.5),
+        inset 0 1px 2px #fff;
+    }
+    .btn-liquid-pill svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2.6;
+      stroke: currentColor;
+    }
+
+    /* Social Proof Avatar Stack */
+    .social-proof {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .avatar-stack {
+      display: flex;
+      align-items: center;
+    }
+    .avatar-stack img {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 3px solid rgba(15, 15, 20, 0.8);
+      margin-left: -12px;
+      object-fit: cover;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+    .avatar-stack img:first-child {
+      margin-left: 0;
+    }
+    .avatar-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 3px solid rgba(15, 15, 20, 0.8);
+      margin-left: -12px;
+      background: linear-gradient(135deg, #ff7a18 0%, #e05300 100%);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 4px 15px rgba(255, 122, 24, 0.4);
+    }
+    .social-proof-text {
+      font-size: 13.5px;
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    /* Right Hero Column: Apple Liquid Glass Freelance Console */
+    .hero-right {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .apple-glass-console {
+      border-radius: 36px;
+      padding: 42px 38px;
+      min-height: 440px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .status-badge-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.9);
+      width: fit-content;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00e676;
+      box-shadow: 0 0 12px #00e676;
+      animation: pulseGreen 1.8s infinite;
+    }
+    @keyframes pulseGreen {
+      0% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 8px #00e676; }
+      50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 18px #00e676; }
+      100% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 8px #00e676; }
+    }
+
+    .freelance-title {
+      font-size: clamp(32px, 4vw, 46px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-top: 18px;
+      line-height: 1.08;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Nested Inner Liquid Glass Card (Testimonial) */
+    .testimonial-glass-chip {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 24px;
+      margin-top: 36px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow:
+        0 15px 35px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      transition: all 0.3s ease;
+    }
+    .testimonial-glass-chip:hover {
+      background: rgba(255, 255, 255, 0.11);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+    .quote-icon {
+      font-size: 32px;
+      line-height: 1;
+      color: #ff8833;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .quote-text {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+    .author-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .author-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 16px rgba(255, 122, 24, 0.4);
+    }
+    .author-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .author-name {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .author-role {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* =========================================
+       SECTION 2: APPLE LIQUID GLASS CARD (IMAGE 1)
+    ========================================= */
+    .glass-showcase-section {
+      min-height: 180vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      position: relative;
+    }
+
+    /* Liquid Ambient Refraction Orbs from Image 1 */
+    .ambient-sphere-red-1 {
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(235, 25, 45, 0.55) 0%,
+        rgba(150, 10, 30, 0.25) 55%,
+        transparent 75%
+      );
+      filter: blur(60px);
+      top: 15%;
+      left: 15%;
+      pointer-events: none;
+      z-index: 3;
+      animation: floatOrbit1 10s ease-in-out infinite alternate;
+    }
+    .ambient-sphere-red-2 {
+      position: absolute;
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle,
+        rgba(195, 18, 38, 0.6) 0%,
+        rgba(85, 5, 15, 0.3) 60%,
+        transparent 80%
+      );
+      filter: blur(75px);
+      bottom: 12%;
+      right: 12%;
+      pointer-events: none;
+      z-index: 3;
+      animation: floatOrbit2 12s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes floatOrbit1 {
+      0% { transform: translate(0, 0) scale(0.95); }
+      100% { transform: translate(30px, -40px) scale(1.05); }
+    }
+    @keyframes floatOrbit2 {
+      0% { transform: translate(0, 0) scale(1.04); }
+      100% { transform: translate(-40px, 30px) scale(0.96); }
+    }
+
+    /* The Masterpiece Apple Liquid Glass Card */
+    .master-glass-container {
+      perspective: 1200px;
+      width: 100%;
+      max-width: 450px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .master-liquid-card {
+      width: 100%;
+      min-height: 600px;
+      border-radius: 42px;
+      padding: 46px 42px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, box-shadow 0.35s ease;
+    }
+
+    .master-liquid-card:hover {
+      box-shadow:
+        0 40px 100px -10px rgba(225, 25, 45, 0.4),
+        0 25px 60px rgba(0, 0, 0, 0.8),
+        inset 0 2px 2px rgba(255, 255, 255, 0.8),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.15),
+        inset 0 0 35px rgba(255, 255, 255, 0.08);
+    }
+
+    /* Card Top Header */
+    .glass-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      z-index: 5;
+    }
+
+    .glass-badge-left {
+      font-size: 14px;
+      line-height: 1.25;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+    .glass-badge-left span {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .glass-badge-right {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.88);
+      letter-spacing: 0.01em;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Card Headline Typography */
+    .glass-center {
+      margin: 40px 0;
+      position: relative;
+      z-index: 5;
+    }
+
+    .glass-headline {
+      font-size: clamp(54px, 9.5vw, 74px);
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+      text-shadow:
+        0 6px 30px rgba(0, 0, 0, 0.5),
+        0 0 60px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Card Footer */
+    .glass-footer {
+      position: relative;
+      z-index: 5;
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+      letter-spacing: 0.03em;
+    }
+
+    /* Apple Scroll Indicator */
+    .scroll-guide {
+      margin-top: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      opacity: 0.65;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      z-index: 10;
+    }
+    .scroll-guide-icon {
+      width: 22px;
+      height: 34px;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      position: relative;
+    }
+    .scroll-guide-icon::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 7px;
+      background: #ffffff;
+      border-radius: 2px;
+      animation: appleScrollBounce 1.8s infinite;
+    }
+    @keyframes appleScrollBounce {
+      0% { transform: translate(-50%, 0); opacity: 1; }
+      100% { transform: translate(-50%, 14px); opacity: 0; }
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .apple-nav {
+        gap: 20px;
+        padding: 8px 16px;
+      }
+      .nav-links {
+        display: none;
+      }
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .hero-section {
+        padding: 110px 24px 40px;
+      }
+      .master-liquid-card {
+        min-height: 520px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Fixed 4K Video Scrub Canvas -->
   <canvas id="canvas"></canvas>
+
+  <!-- Optical Vignette -->
+  <div class="cinematic-vignette"></div>
+
+  <!-- Content Layer -->
+  <div class="content-wrapper">
+
+    <!-- VisionOS Floating Liquid Pill Navbar -->
+    <div class="nav-floating-container">
+      <nav class="apple-nav">
+        <a href="#" class="brand-logo">
+          <div class="brand-icon"></div>
+          <div class="brand-name">
+            <span class="brand-title">OMNIC</span>
+            <span class="brand-sub">STUDIO</span>
+          </div>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="#work">Work</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="#contact" class="nav-contact-pill">Let's Talk</a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Section 1: Hero Showcase (Image 2) with Apple Liquid Glass Styling -->
+    <main class="hero-section" id="work">
+      <div class="bg-watermark">PORTFOLIO</div>
+
+      <div class="hero-grid">
+        <!-- Left Hero Content -->
+        <div class="hero-left">
+          <div class="brand-signature">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 16c4 0 6-8 10-8s4 4 6 4" stroke-linecap="round"/>
+            </svg>
+            <span>Semaan</span>
+          </div>
+
+          <h1 class="hero-title-create">CREATE</h1>
+
+          <p class="hero-tagline">
+            Designs that inspire.<br>
+            Ideas that connect.
+          </p>
+
+          <a href="#contact" class="btn-liquid-pill">
+            <span>VIEW WORK</span>
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 17L17 7M17 7H9M17 7V15" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+
+          <!-- Social Proof Avatar Stack -->
+          <div class="social-proof">
+            <div class="avatar-stack">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt="Client 1">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" alt="Client 2">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" alt="Client 3">
+              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face" alt="Client 4">
+              <div class="avatar-badge">+12</div>
+            </div>
+            <div class="social-proof-text">Trusted by forward-thinking brands worldwide.</div>
+          </div>
+        </div>
+
+        <!-- Right Hero Column: Apple Liquid Glass Console -->
+        <div class="hero-right">
+          <div class="liquid-glass apple-glass-console interactive-glass">
+            <div class="liquid-caustic"></div>
+
+            <div style="position: relative; z-index: 5;">
+              <div class="status-badge-row">
+                <span>AVAILABLE FOR</span>
+                <span class="pulse-dot"></span>
+              </div>
+              <h2 class="freelance-title">Freelance<br>Projects</h2>
+            </div>
+
+            <!-- Inner Liquid Glass Testimonial Chip -->
+            <div class="testimonial-glass-chip">
+              <div class="quote-icon">“</div>
+              <p class="quote-text">Alexis delivered outstanding work that exceeded our expectations.</p>
+              <div class="author-row">
+                <img class="author-img" src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&h=100&fit=crop&crop=face" alt="James Carter">
+                <div class="author-info">
+                  <span class="author-name">JAMES CARTER</span>
+                  <span class="author-role">FOUNDER, BRIO</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Section 2: Masterpiece Apple Liquid Glass Card (Image 1) -->
+    <section class="glass-showcase-section" id="about">
+      <div class="ambient-sphere-red-1"></div>
+      <div class="ambient-sphere-red-2"></div>
+
+      <div class="master-glass-container" id="tiltContainer">
+        <div class="liquid-glass master-liquid-card interactive-glass" id="tiltCard">
+          <div class="liquid-caustic"></div>
+
+          <div class="glass-header">
+            <div class="glass-badge-left">
+              Glass
+              <span>morphic effect</span>
+            </div>
+            <div class="glass-badge-right">Let's create</div>
+          </div>
+
+          <div class="glass-center">
+            <h2 class="glass-headline">
+              Hello,<br>
+              I'm a<br>
+              Designer.
+            </h2>
+          </div>
+
+          <div class="glass-footer">
+            @_Taiwo_taiwo
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-guide">
+        <div class="scroll-guide-icon"></div>
+        <span>Scroll to scrub video sequence</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- Smooth Video Scrubbing Controller -->
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d', { alpha: false });
@@ -78,7 +985,7 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Preload all frames
+    // Preload video frames
     for (let i = 0; i < FRAME_COUNT; i++) {
       const img = new Image();
       img.src = getFramePath(i);
@@ -144,7 +1051,7 @@
     window.addEventListener('scroll', updateScroll, { passive: true });
     updateScroll();
 
-    // Smooth linear interpolation (LERP) loop
+    // Buttery smooth LERP render loop
     const LERP_FACTOR = 0.08;
 
     function render() {
@@ -172,6 +1079,43 @@
     }
 
     requestAnimationFrame(render);
+
+    // Dynamic Liquid Caustic & 3D Tilt Optics
+    const interactiveGlasses = document.querySelectorAll('.interactive-glass');
+
+    interactiveGlasses.forEach((glass) => {
+      glass.addEventListener('mousemove', (e) => {
+        const rect = glass.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        glass.style.setProperty('--cx', `${x}px`);
+        glass.style.setProperty('--cy', `${y}px`);
+      });
+    });
+
+    // 3D Perspective Tilt for the Masterpiece Card
+    const container = document.getElementById('tiltContainer');
+    const tiltCard = document.getElementById('tiltCard');
+
+    if (container && tiltCard) {
+      container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = ((y - centerY) / centerY) * -14;
+        const rotateY = ((x - centerX) / centerX) * 14;
+
+        tiltCard.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.025, 1.025, 1.025)`;
+      });
+
+      container.addEventListener('mouseleave', () => {
+        tiltCard.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      });
+    }
   </script>
 </body>
 </html>
